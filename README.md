@@ -29,7 +29,7 @@ If you want to use the synthesizer as a MIDI controller, you will need three app
 1. Connect the 8Ω speaker's VCC -> 120Ω resistor -> port 12 (digital) on the MEGA, and GND -> GND.
 2. Connect the OLED's GND -> GND, VCC -> 5V, SDA -> SDA (20), SCL -> SCL (21).
 3. Connect the IR Receiver's GND -> GND, VCC -> 5V, 3rd port -> 22 (digital).
-4. Fit everything inside the housing if you 3D printed it:
+4. Fit everything inside the housing if you 3D printed it (you can find it [here](https://www.printables.com/model/1645729-arduino-synthesizer-case)):
    1. Align the Mega 2560 with the port holes.
    2. Put the breadboard if you used one (for the speaker resistor) on top of the Mega.
    3. Align the speaker next to the Mega with the speaker grills.
