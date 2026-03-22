@@ -45,4 +45,3 @@ Included in this repository are two microcontroller files: index.ino and pitches
 
 # Extras   
 If you would like to 3D print the case, here are the files: https://www.printables.com/model/1645729-arduino-synthesizer-case  
-Here is the link to the overview video of the device: 
