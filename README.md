@@ -8,7 +8,7 @@ The Synthesizer is controlled with an IR remote.
 - Left & Right Arrows | Switches scale
 - OK | Toggles MIDI mode
 - Up & Down Arrows | Changes octave (MIDI mode only)
-- Key 9 has no function.
+- Keys 9, #, and * have no function.
 
 If you want to use the synthesizer as a MIDI controller, you will need three apps: a DAW (I used [FL Studio](https://www.image-line.com)), [loopMIDI](https://www.tobias-erichsen.de/software/loopmidi.html), and [hairless-MIDIserial](https://projectgus.github.io/hairless-midiserial/). The loopMIDI app will create a MIDI port, while the hairless-midiserial app connects the device to the MIDI port. From there, the DAW will pick up the MIDI signals and play notes. Keep in mind that you will need to connect the device to your laptop with a USB-A to USB-B cable.
 
