@@ -1,11 +1,13 @@
+// libraries
 #include <toneAC.h>
 #include <Wire.h>
 #include <IRremote.hpp>
 #include <U8g2lib.h>
-#include "pitches.h"
+#include "pitches.h" // pitches for standalone mode (speaker)
 
 U8G2_SSD1306_128X64_NONAME_F_HW_I2C u8g2(U8G2_R0, U8X8_PIN_NONE);
 
+// ir codes
 #define cmd0 0x19
 #define cmd1 0x45
 #define cmd2 0x46
@@ -21,6 +23,7 @@ U8G2_SSD1306_128X64_NONAME_F_HW_I2C u8g2(U8G2_R0, U8X8_PIN_NONE);
 #define right 0x5A
 #define ok 0x1C
 
+// reused variables
 int note = 0;
 int lastMidiNote = -1;
 int scaleIndex = 0;
@@ -28,6 +31,7 @@ bool midi = false;
 int octave = 0;
 int majmin = 0;
 
+// scale & note info
 int activeMIDINotes[8] = {};
 int activeSPKRNotes[8] = {};
 String activeSCRNNotes[8] = {};
@@ -61,10 +65,12 @@ int gsMinor = 11;
 int scaleStarts[24] = { aMajor, asMajor, bMajor, cMajor, csMajor, dMajor, dsMajor, eMajor, fMajor, fsMajor, gMajor, gsMajor, aMinor, asMinor, bMinor, cMinor, csMinor, dMinor, dsMinor, eMinor, fMinor, fsMinor, gMinor, gsMinor };
 String scaleNames[24] = { "A Major", "A# Major", "B Major", "C Major", "C# Major", "D Major", "D# Major", "E Major", "F Major", "F# Major", "G Major", "G# Major", "A Minor", "A# Minor", "B Minor", "C Minor", "C# Minor", "D Minor", "D# Minor", "E Minor", "F Minor", "F# Minor", "G Minor", "G# Minor" };
 
+// function that runs every time user changes scale, updates notes arrays so the bot knows which notes to play
 void updateScaleNotes() {
   int start = scaleStarts[scaleIndex];
   bool isMinor = (scaleIndex > 11);
-  if (!isMinor) {
+  if (!isMinor) { // major scales
+    // speaker pitches
     activeSPKRNotes[0] = notesSPKR[start];
     activeSPKRNotes[1] = notesSPKR[start + 2];
     activeSPKRNotes[2] = notesSPKR[start + 4];
@@ -74,6 +80,7 @@ void updateScaleNotes() {
     activeSPKRNotes[6] = notesSPKR[start + 11];
     activeSPKRNotes[7] = notesSPKR[start + 12];
 
+    //midi notes
     activeMIDINotes[0] = notesMIDI[start];
     activeMIDINotes[1] = notesMIDI[start + 2];
     activeMIDINotes[2] = notesMIDI[start + 4];
@@ -83,6 +90,7 @@ void updateScaleNotes() {
     activeMIDINotes[6] = notesMIDI[start + 11];
     activeMIDINotes[7] = notesMIDI[start + 12];
 
+    // screen strings
     activeSCRNNotes[0] = notesSCRN[start];
     activeSCRNNotes[1] = notesSCRN[start + 2];
     activeSCRNNotes[2] = notesSCRN[start + 4];
@@ -91,7 +99,8 @@ void updateScaleNotes() {
     activeSCRNNotes[5] = notesSCRN[start + 9];
     activeSCRNNotes[6] = notesSCRN[start + 11];
     activeSCRNNotes[7] = notesSCRN[start + 12];
-  } else {
+  } else { // minor scales
+    // speaker pitches
     activeSPKRNotes[0] = notesSPKR[start];
     activeSPKRNotes[1] = notesSPKR[start + 2];
     activeSPKRNotes[2] = notesSPKR[start + 3];
@@ -101,6 +110,7 @@ void updateScaleNotes() {
     activeSPKRNotes[6] = notesSPKR[start + 10];
     activeSPKRNotes[7] = notesSPKR[start + 12];
 
+    //midi notes
     activeMIDINotes[0] = notesMIDI[start];
     activeMIDINotes[1] = notesMIDI[start + 2];
     activeMIDINotes[2] = notesMIDI[start + 3];
@@ -110,6 +120,7 @@ void updateScaleNotes() {
     activeMIDINotes[6] = notesMIDI[start + 10];
     activeMIDINotes[7] = notesMIDI[start + 12];
 
+    // screen strings
     activeSCRNNotes[0] = notesSCRN[start];
     activeSCRNNotes[1] = notesSCRN[start + 2];
     activeSCRNNotes[2] = notesSCRN[start + 3];
@@ -121,6 +132,7 @@ void updateScaleNotes() {
   }
 }
 
+// self explanatory, function that updates screen
 void drawDisplay() {
   // scale font: u8g2_font_6x12_tf
   // note font: u8g2_font_spleen32x64_mf
@@ -143,21 +155,18 @@ void drawDisplay() {
 void setup() {
   Wire.begin();
   IrReceiver.begin(22, ENABLE_LED_FEEDBACK);
-
   u8g2.begin();
   u8g2.clearBuffer();
-
   drawDisplay();
-
   Serial.begin(115200);
-
   updateScaleNotes();
 }
 
 void loop() {
+  // if ir signal received
   if (IrReceiver.decode()) {
     uint8_t cmd = IrReceiver.decodedIRData.command;
-    switch (cmd) {
+    switch (cmd) { // assign behaviors to buttons
       case cmd0: note = 0; break;
       case cmd1: note = 1; break;
       case cmd2: note = 2; break;
@@ -190,30 +199,36 @@ void loop() {
         midi = !midi;
         break;
     };
-    if (midi == false) {
-      if (note == 0) toneAC();
+    // play a note if needed
+    if (midi == false) { // standalone mode
+      if (note == 0) toneAC(); // don't play any note if no note is selected
       else {
+        // play pitch from array (array updated in updateScaleNotes())
         toneAC(activeSPKRNotes[note - 1]);
       }
-    } else if (midi == true) {
+    } else if (midi == true) { // midi mode
       int currentMidiNote = -1;
       if (note != 0) {
+        // if a note is selected, assign that note to the note to be played
         currentMidiNote = activeMIDINotes[note - 1] + (12 * octave);
       };
-      if (lastMidiNote != -1) {
+      if (lastMidiNote != -1) { // if the note changed
+        // stop last note
         Serial.write(0x80);
         Serial.write(lastMidiNote);
         Serial.write(0);
       };
-      if (currentMidiNote != -1) {
+      if (currentMidiNote != -1) { // if the note changed
+        // start next note
         Serial.write(0x90);
         Serial.write(currentMidiNote);
         Serial.write(127);
       };
+      // update note info
       lastMidiNote = currentMidiNote;
     };
     drawDisplay();
     IrReceiver.resume();
-    delay(50);
+    delay(50); // debounce
   };
 };
