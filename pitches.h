@@ -1,3 +1,5 @@
+// this file includes all the necessary pitches for the physical speaker in the bot to play. i would have added octave changing, but the speaker can't go too high or too low, so i only included the pitches it can play.
+
 #define A4 220
 
 #define AS4 233
