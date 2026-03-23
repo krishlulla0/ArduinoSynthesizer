@@ -7,7 +7,7 @@
 
 U8G2_SSD1306_128X64_NONAME_F_HW_I2C u8g2(U8G2_R0, U8X8_PIN_NONE);
 
-// ir codes
+// ir codes (YOU NEED TO PUT YOUR REMOTE'S CODE IN HERE; FIND THE CODES USING irtest.ino)
 #define cmd0 0x19
 #define cmd1 0x45
 #define cmd2 0x46
