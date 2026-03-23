@@ -41,7 +41,8 @@ If you want to use the synthesizer as a MIDI controller, you will need three app
 Included in this repository are two microcontroller files: index.ino and pitches.h. You will need both.  
 1. Import these files into the Arduino IDE.
 2. Plug in the Synthesizer to your computer with the USB-B port.
-3. Upload the index.ino code to your device. Make sure no other app (hairless-midiserial) is using the device's Serial.
+3. Upload the index.ino code to your device. Make sure no other app (hairless-midiserial) is using the device's Serial.  
+**IMPORTANT** | You will need to use the irtest.ino code to find the codes of each button on your IR remote -- it is different for each remote. You will then have to update these codes in the IR codes section of index.ino.  
 
 # Extras   
 If you would like to 3D print the case, here are the files: https://www.printables.com/model/1645729-arduino-synthesizer-case  
